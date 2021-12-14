@@ -25,7 +25,7 @@ def check():
 
 def check0():
     """
-    This function tests the naming (main methods of the DiGraph class, as defined in GraphInterface.
+    This function tests the naming (main methods of the DiGraph.py class, as defined in GraphInterface.
     :return:
     """
     g = DiGraph()  # creates an empty directed graph
