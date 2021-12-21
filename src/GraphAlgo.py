@@ -106,7 +106,7 @@ class GraphAlgo(GraphAlgoInterface):
 
 
     def plot_graph(self) -> None:
-        d = Drawer.Drawer(self.graph)
+        d = Drawer.Drawer(self)
         d.main()
 
     def dijkstra(self,src) -> (dict,dict):
