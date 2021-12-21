@@ -5,9 +5,7 @@ from typing import List
 from GraphAlgoInterface import GraphAlgoInterface, GraphInterface
 from DiGraph import DiGraph
 
-import pygame
-
-from src import Drawer
+from src.GUI import Drawer
 
 
 class GraphAlgo(GraphAlgoInterface):

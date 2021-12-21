@@ -1,11 +1,11 @@
-import random
 
-import pygame_gui
 from pygame.time import Clock
 
 from GraphInterface import GraphInterface
 
 import pygame
+
+from src.GUI.SidePanel import SidePanel
 
 
 class Drawer:
@@ -44,13 +44,7 @@ class Drawer:
             self.max_y += 0.001
             self.min_y -= 0.001
 
-        self.UI = pygame_gui.UIManager((800, 800))
-
-        hello_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((700, 50), (100, 50)),
-                                                    text='Say Hello',
-                                                    manager=self.UI)
-
-        input = pygame_gui.elements.UIWindow(,)
+        self.UI = SidePanel(screen)
 
         clock = Clock()
         while running:
@@ -61,13 +55,7 @@ class Drawer:
                 if event.type == pygame.QUIT:
                     # change the value to False, to exit the main loop
                     running = False
-
-                if event.type == pygame.USEREVENT:
-                    if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-                        if event.ui_element == hello_button:
-                            print('Hello World!')
-
-                self.UI.process_events(event)
+                self.UI.handle_input(event)
 
             screen.fill((255,255,255),pygame.display.get_surface().get_rect())
             for n in nodes:
@@ -78,11 +66,7 @@ class Drawer:
                         pto = self.point_to_screen_cord(float(g.get_all_v()[e].loc[0]),float(g.get_all_v()[e].loc[1]))
                         pygame.draw.line(screen,(0,0,0),pfrom,pto)
 
-
-
-            self.UI.update(time_delta)
-
-            self.UI.draw_ui(screen)
+            self.UI.handle_drawing(time_delta)
 
             pygame.display.update()
 
