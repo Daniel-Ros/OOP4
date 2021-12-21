@@ -1,15 +1,20 @@
 import json
+import random
 from typing import List
 
 from GraphAlgoInterface import GraphAlgoInterface, GraphInterface
-from Node import Node
 from DiGraph import DiGraph
+
+import pygame
+
+from src import Drawer
 
 
 class GraphAlgo(GraphAlgoInterface):
 
-    def __init__(self, g: DiGraph = None):
-        self.graph: DiGraph = g
+    def __init__(self, g: GraphInterface = None):
+        self.graph: GraphInterface = g
+        self.fake_pos = False
 
     def get_graph(self) -> GraphInterface:
         return self.graph
@@ -23,8 +28,9 @@ class GraphAlgo(GraphAlgoInterface):
             if "pos" in n:
                 (px, py, pz) = n["pos"].split(",")
             else:
-                (px, py) = (0, 0)
-            g.add_node(n["id"], (px, py))
+                self.fake_pos = True
+                (px, py, pz) = (random.uniform(0,1), random.uniform(0,1), 0)
+            g.add_node(n["id"], (px, py, pz))
 
         for n in js["Edges"]:
             g.add_edge(n["src"], n["dest"], n["w"])
@@ -33,67 +39,129 @@ class GraphAlgo(GraphAlgoInterface):
 
     def save_to_json(self, file_name: str) -> bool:
         out = {
-            "Nodes":[],
-            "Edges":[]
+            "Nodes": [],
+            "Edges": []
         }
         for n in self.graph.get_all_v().values():
-            out["Nodes"].append({"id":n.id})
+            js = {}
+            js["id"] = n.id
+            if not self.fake_pos:
+                js["pos"] = F"{n.loc[0]},{n.loc[1]},{n.loc[2]}"
+            out["Nodes"].append(js)
 
         for n in self.graph.get_all_v():
             for e in self.graph.all_out_edges_of_node(n):
-                print(e)
                 out["Edges"].append({
-                    "src" : n,
-                    "dest" : e,
-                    "w" : self.graph.all_out_edges_of_node(n)[e],
+                    "src": n,
+                    "dest": e,
+                    "w": self.graph.all_out_edges_of_node(n)[e],
                 })
 
-        f = open(file_name,"w+")
+        f = open(file_name, "w+")
         f.write(str(out))
 
     def shortest_path(self, id1: int, id2: int) -> (float, list):
-        """
-        Returns the shortest path from node id1 to node id2 using Dijkstra's Algorithm
-        @param id1: The start node id
-        @param id2: The end node id
-        @return: The distance of the path, a list of the nodes ids that the path goes through
-        Example:
-#      >>> from GraphAlgo import GraphAlgo
-#       >>> g_algo = GraphAlgo()
-#        >>> g_algo.addNode(0)
-#        >>> g_algo.addNode(1)
-#        >>> g_algo.addNode(2)
-#        >>> g_algo.addEdge(0,1,1)
-#        >>> g_algo.addEdge(1,2,4)
-#        >>> g_algo.shortestPath(0,1)
-#        (1, [0, 1])
-#        >>> g_algo.shortestPath(0,2)
-#        (5, [0, 1, 2])
-        Notes:
-        If there is no path between id1 and id2, or one of them dose not exist the function returns (float('inf'),[])
-        More info:
-        https://en.wikipedia.org/wiki/Dijkstra's_algorithm
-        """
-        return (5, [0, 1, 2])
+        dist, prev = self.dijkstra(id1)
+        ret = []
+        p = prev[id2]
+        while p != -1:
+            ret.append(p)
+            p = prev[p]
+
+        ret.reverse()
+        if len(ret) > 0:
+            ret.append(id2)
+
+        return dist[id2], ret
 
     def TSP(self, node_lst: List[int]) -> (List[int], float):
-        """
-        Finds the shortest path that visits all the nodes in the list
-        :param node_lst: A list of nodes id's
-        :return: A list of the nodes id's in the path, and the overall distance
-        """
+        if len(node_lst) == 0 or node_lst is None:
+            return None
+        ret_w = 0
+        remaining = node_lst.copy()
+        ret = [remaining[0]]
+        while len(remaining) > 0:
+            city = ret[-1]
+            if city in remaining:
+                remaining.remove(city)
+
+            min_road, p = self.get_min_undirected_road(city, remaining)
+            ret_w += p
+            for n in min_road:
+                if n in remaining:
+                    remaining.remove(n)
+                ret.append(n)
+        return ret,ret_w
 
     def centerPoint(self) -> (int, float):
-        """
-        Finds the node that has the shortest distance to it's farthest node.
-        :return: The nodes id, min-maximum distance
-        """
+        nodes = self.graph.get_all_v()
+        ret = None
+        min_dist = float('inf')
+        for n in nodes:
+            dist,prev = self.dijkstra(n)
+            m = max(dist, key=dist.get)
+            if dist[m] < min_dist:
+                min_dist = dist[m]
+                ret = m
+        return ret
+
+
 
     def plot_graph(self) -> None:
-        """
-        Plots the graph.
-        If the nodes have a position, the nodes will be placed there.
-        Otherwise, they will be placed in a random but elegant manner.
-        @return: None
-        """
-        raise NotImplementedError
+        d = Drawer.Drawer(self.graph)
+        d.main()
+
+    def dijkstra(self,src) -> (dict,dict):
+        dist = {}
+        prev = {}
+        visited = []
+        Q = []
+
+        nodes = self.graph.get_all_v()
+        for node_id in nodes:
+            if node_id == src:
+                dist[node_id] = 0
+                prev[node_id] = -1
+            else:
+                dist[node_id] = float('inf')
+                prev[node_id] = -1
+
+        Q.append(src)
+
+        while len(Q) != 0:
+            sorted(Q, key=lambda x: dist[x])
+            n = Q.pop()
+            edges = self.graph.all_out_edges_of_node(n)
+            for dest in edges:
+                if dest in visited:
+                    continue;
+                alt = dist[n] + edges[dest]
+                if alt < dist[dest]:
+                    dist[dest] = alt
+                    prev[dest] = n
+                    Q.append(dest)
+
+        return dist, prev
+
+    def get_min_undirected_road(self, node, remaining):
+        dist, prev = self.dijkstra(node)
+        min_node = None
+        min_weight = float('inf')
+        for n in remaining:
+                w = dist[n]
+                if w < min_weight:
+                    min_weight = w;
+                    min_node = n
+
+        ret = []
+        p = prev[min_node]
+        while p != -1 and p!= node:
+            ret.append(p)
+            p = prev[p]
+        ret.reverse()
+        ret.append(min_node)
+        return ret, dist[min_node]
+
+
+
+
