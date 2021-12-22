@@ -1,3 +1,4 @@
+import json
 import os
 
 import pygame
@@ -43,12 +44,24 @@ class SidePanel:
                                                     initial_file_path=os.getcwd(),
                                                     allow_existing_files_only=True)
                     self.save.disable()
+                if event.ui_element == self.short:
+                    pass
+                if event.ui_element == self.tsp:
+                    pass
+                if event.ui_element == self.center:
+                    c = self.ga.centerPoint()
+                    if c in self.ga.get_graph().get_all_v():
+                        self.ga.get_graph().get_all_v()[c].tag = (255,0,0)
 
             if event.user_type == pygame_gui.UI_FILE_DIALOG_PATH_PICKED:
                 if self.load.is_enabled is False:
-                    self.ga.load_from_json(event.text)
-                    self.choser = None
-                    self.load.enable()
+                    try:
+                        self.ga.load_from_json(event.text)
+                        self.choser = None
+                        self.load.enable()
+                    except json.decoder.JSONDecodeError:
+                        print("json is not readable")
+
                 else:
                     self.ga.save_to_file(event.text)
                     self.choser = None

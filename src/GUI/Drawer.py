@@ -57,7 +57,7 @@ class Drawer:
             for n in nodes:
                 if n.loc is not None:
                     pfrom = self.point_to_screen_cord(float(n.loc[0]), float(n.loc[1]))
-                    pygame.draw.circle(screen, pygame.Color(n.tag), pfrom, 5, 1)
+                    pygame.draw.circle(screen, pygame.Color(n.tag), pfrom, 5, 10)
                     for e in g.all_out_edges_of_node(n.id):
                         pto = self.point_to_screen_cord(float(g.get_all_v()[e].loc[0]), float(g.get_all_v()[e].loc[1]))
                         pygame.draw.line(screen, (0, 0, 0), pfrom, pto)
@@ -87,8 +87,3 @@ class Drawer:
                 self.max_x = max(self.max_x, float(n.loc[0]))
                 self.min_y = min(self.min_y, float(n.loc[1]))
                 self.max_y = max(self.max_y, float(n.loc[1]))
-
-        print(self.min_x)
-        print(self.max_x)
-        print(self.min_y)
-        print(self.max_y)

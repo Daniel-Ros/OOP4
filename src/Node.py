@@ -7,7 +7,7 @@ class Node:
         self.loc = loc
         self.edges_to = {}
         self.edges_from = {}
-        self.tag = (255,0,0)
+        self.tag = (0,0,0)
 
     # {0: 0: |edges out| 1 |edges in| 1
     def __repr__(self):
