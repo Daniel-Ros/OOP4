@@ -67,8 +67,8 @@ class Drawer:
             pygame.display.update()
 
     def point_to_screen_cord(self, px, py):
-        width = pygame.display.get_surface().get_rect().width
-        height = pygame.display.get_surface().get_rect().height
+        width = pygame.display.get_surface().get_rect().width *0.80
+        height = pygame.display.get_surface().get_rect().height *0.80
         x = (((self.max_x - px) / (self.max_x - self.min_x)) * width * 0.9 + width * 0.05)
         y = (((self.max_y - py) / (self.max_y - self.min_y)) * height * 0.9 + height * 0.05)
 
