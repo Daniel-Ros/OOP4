@@ -71,7 +71,7 @@ class SidePanel:
                     self.save.disable()
                 if event.ui_element == self.short:
                     self.func_ans.set_dimensions((100, 50))
-                    self.func_ans.set_position((700,375))
+                    self.func_ans.set_position((700, 375))
                     self.tsp_input.visible = False
                     self.ok.set_position((700, 350))
                     self.src_input.set_text('Src Input')
@@ -102,6 +102,7 @@ class SidePanel:
                     self.tsp_input.update(0.1)
                     pass
                 if event.ui_element == self.center:
+                    self.hide_inputs()
                     c = self.ga.centerPoint()
                     if c in self.ga.get_graph().get_all_v():
                         self.ga.get_graph().get_all_v()[c].tag = (255, 0, 0)
@@ -194,3 +195,10 @@ class SidePanel:
     def handle_drawing(self, time_delta):
         self.UI.update(time_delta)
         self.UI.draw_ui(self.screen)
+
+    def hide_inputs(self):
+        self.ok.visible = False
+        self.tsp_input.visible = False
+        self.dst_input.visible = False
+        self.src_input.visible = False
+        self.func_ans.visible = False
