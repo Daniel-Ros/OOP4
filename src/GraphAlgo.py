@@ -27,7 +27,7 @@ class GraphAlgo(GraphAlgoInterface):
                 (px, py, pz) = n["pos"].split(",")
             else:
                 self.fake_pos = True
-                (px, py, pz) = (random.uniform(0,1), random.uniform(0,1), 0)
+                (px, py, pz) = (random.uniform(0, 1), random.uniform(0, 1), 0)
             g.add_node(n["id"], (px, py, pz))
 
         for n in js["Edges"]:
@@ -89,27 +89,25 @@ class GraphAlgo(GraphAlgoInterface):
                 if n in remaining:
                     remaining.remove(n)
                 ret.append(n)
-        return ret,ret_w
+        return ret, ret_w
 
     def centerPoint(self) -> (int, float):
         nodes = self.graph.get_all_v()
         ret = None
         min_dist = float('inf')
         for n in nodes:
-            dist,prev = self.dijkstra(n)
+            dist, prev = self.dijkstra(n)
             m = max(dist, key=dist.get)
             if dist[m] < min_dist:
                 min_dist = dist[m]
                 ret = m
         return ret
 
-
-
     def plot_graph(self) -> None:
         d = Drawer.Drawer(self)
         d.main()
 
-    def dijkstra(self,src) -> (dict,dict):
+    def dijkstra(self, src) -> (dict, dict):
         dist = {}
         prev = {}
         visited = []
@@ -146,20 +144,24 @@ class GraphAlgo(GraphAlgoInterface):
         min_node = None
         min_weight = float('inf')
         for n in remaining:
-                w = dist[n]
-                if w < min_weight:
-                    min_weight = w;
-                    min_node = n
+            w = dist[n]
+            if w < min_weight:
+                min_weight = w;
+                min_node = n
 
         ret = []
         p = prev[min_node]
-        while p != -1 and p!= node:
+        while p != -1 and p != node:
             ret.append(p)
             p = prev[p]
         ret.reverse()
         ret.append(min_node)
         return ret, dist[min_node]
 
-
-
-
+    def exist_nodes(self, nodes_id: List[int]) -> bool:
+        nodes = self.graph.get_all_v()
+        list_nodes = []
+        for id in nodes_id:
+            if id not in nodes:
+                return False
+        return True

@@ -33,19 +33,24 @@ class SidePanel:
         self.dst_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((700, 325), (100, 50)),
                                                              manager=self.UI,
                                                              visible=False)
-        self.src_input.set_text('Src Input')
-        self.dst_input.set_text('Dest Input')
+
+        self.tsp_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((700, 300), (100, 50)),
+                                                             manager=self.UI,
+                                                             visible=False)
 
         self.ok = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((700, 350), (100, 25)),
                                                text='OK',
                                                manager=self.UI
                                                , visible=False)
-        self.func_ans = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((700, 375), (100, 50)),
-                                                    text='',
-                                                    manager=self.UI,
-                                                    visible=False)
+        self.func_ans = pygame_gui.elements.UITextBox(relative_rect=pygame.Rect((700, 375), (100, 50)),
+                                                      html_text='',
+                                                      manager=self.UI,
+                                                      visible=False)
 
         self.last_event = None
+        self.user_src = -1
+        self.user_dst = -1
+        self.user_tsp = -1
 
     def handle_input(self, event):
         if event.type == pygame.USEREVENT:
@@ -65,6 +70,12 @@ class SidePanel:
                                                                   allow_existing_files_only=True)
                     self.save.disable()
                 if event.ui_element == self.short:
+                    self.func_ans.set_dimensions((100, 50))
+                    self.func_ans.set_position((700,375))
+                    self.tsp_input.visible = False
+                    self.ok.set_position((700, 350))
+                    self.src_input.set_text('Src Input')
+                    self.dst_input.set_text('Dest Input')
                     self.src_input.visible = True
                     self.dst_input.visible = True
                     self.func_ans.visible = True
@@ -76,6 +87,19 @@ class SidePanel:
                     self.dst_input.update(0.1)
                     pass
                 if event.ui_element == self.tsp:
+                    self.func_ans.set_dimensions((100, 50))
+                    self.src_input.visible = False
+                    self.dst_input.visible = False
+                    self.tsp_input.set_text('c1,c2,c3...')
+                    self.ok.set_position((700, 325))
+                    self.func_ans.set_position((700, 350))
+                    self.func_ans.html_text = ''
+                    self.func_ans.rebuild()
+                    self.tsp_input.visible = True
+                    self.ok.visible = True
+                    self.last_event = self.tsp
+                    self.tsp_input.redraw_cursor()
+                    self.tsp_input.update(0.1)
                     pass
                 if event.ui_element == self.center:
                     c = self.ga.centerPoint()
@@ -83,12 +107,64 @@ class SidePanel:
                         self.ga.get_graph().get_all_v()[c].tag = (255, 0, 0)
 
                 if event.ui_element == self.ok:
-                    user_src = int(self.src_input.get_text())
-                    user_dst = int(self.dst_input.get_text())
-                    if self.last_event == self.short:
-                        shortest = self.ga.shortest_path(user_src, user_dst)
-                        self.func_ans.set_text(shortest[0])
-                        print(shortest[0])
+                    try:
+                        if self.last_event == self.short:
+                            user_src = int(self.src_input.get_text())
+                            user_dst = int(self.dst_input.get_text())
+                            shortest = self.ga.shortest_path(user_src, user_dst)
+                            ans = '<br>' + str(user_src) + ' >> ' + str(user_dst) + '<br>' + str(shortest[0])
+                            self.func_ans.html_text = ans
+                            self.func_ans.rebuild()
+                            self.func_ans.disable()
+                            print(shortest[0])
+                            self.src_input.visible = False
+                            self.dst_input.visible = False
+                            self.ok.visible = False
+                            self.func_ans.set_position((700, 300))
+                        elif self.last_event == self.tsp:
+                            user_tsp = self.tsp_input.get_text()
+                            user_tsp = user_tsp.split(',')
+                            self.func_ans.visible = True
+                            for i in range(0, len(user_tsp)):
+                                user_tsp[i] = int(user_tsp[i])
+                            b = self.ga.exist_nodes(user_tsp)
+                            print(user_tsp)
+                            print(b)
+                            tsp_out = -1
+                            ans = ''
+                            counter = 1
+                            if b is False:
+                                self.func_ans.html_text = "Node not exist"
+                            else:
+                                tsp_out = self.ga.TSP(user_tsp)
+                            print(tsp_out)
+                            if tsp_out is -1:
+                                pass
+                            else:
+                                for i in range(0, len(tsp_out[0])):
+                                    if i > 0 and i % 3 == 0:
+                                        ans = ans + '<br>'
+                                        counter += 1
+                                    if i == len(tsp_out[0]) - 1:
+                                        ans = ans + str(tsp_out[0][i])
+                                    else:
+                                        ans = ans + str(tsp_out[0][i]) + '>'
+                            print(tsp_out[1])
+                            self.func_ans.set_dimensions((100, 50 * counter))
+                            self.func_ans.html_text = ans + '<br>' + str(tsp_out[1]) + '<br>'
+                            self.tsp_input.visible = False
+                            self.ok.visible = False
+                            self.func_ans.set_position((700, 300))
+                            self.func_ans.enable()
+                            self.func_ans.rebuild()
+
+
+
+                    except ValueError:
+                        print("bad input")
+                        self.func_ans.text = 'Only Numbers'
+                        self.func_ans.rebuild()
+                        pass
 
             if event.user_type == pygame_gui.UI_FILE_DIALOG_PATH_PICKED:
                 if self.load.is_enabled is False:
