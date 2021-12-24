@@ -150,14 +150,14 @@ class SidePanel:
                                         ans = ans + str(tsp_out[0][i])
                                     else:
                                         ans = ans + str(tsp_out[0][i]) + '>'
+                                self.func_ans.set_dimensions((100, 50 * counter))
+                                self.func_ans.html_text = ans + '<br>' + str(tsp_out[1]) + '<br>'
+                                self.tsp_input.visible = False
+                                self.ok.visible = False
+                                self.func_ans.set_position((700, 300))
+                                self.func_ans.enable()
+                                self.func_ans.rebuild()
                             print(tsp_out[1])
-                            self.func_ans.set_dimensions((100, 50 * counter))
-                            self.func_ans.html_text = ans + '<br>' + str(tsp_out[1]) + '<br>'
-                            self.tsp_input.visible = False
-                            self.ok.visible = False
-                            self.func_ans.set_position((700, 300))
-                            self.func_ans.enable()
-                            self.func_ans.rebuild()
 
 
 
