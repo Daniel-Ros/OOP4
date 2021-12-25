@@ -103,7 +103,7 @@ class SidePanel:
                     pass
                 if event.ui_element == self.center:
                     self.hide_inputs()
-                    c = self.ga.centerPoint()
+                    c, min_dist = self.ga.centerPoint()
                     if c in self.ga.get_graph().get_all_v():
                         self.ga.get_graph().get_all_v()[c].tag = (255, 0, 0)
 

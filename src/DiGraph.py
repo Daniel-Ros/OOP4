@@ -1,13 +1,7 @@
 import random
 
-from GraphInterface import GraphInterface
-from Node import Node
-
-# Graph: |V|=4 , |E|=5
-#     {0: 0: |edges out| 1 |edges in| 1, 1: 1: |edges out| 3 |edges in| 1, 2: 2: |edges out| 1 |edges in| 1, 3: 3: |edges out| 0 |edges in| 2}
-#     {0: 1}
-#     {0: 1.1, 2: 1.3, 3: 10}
-
+from src.GraphInterface import GraphInterface
+from src.Node import Node
 
 class DiGraph(GraphInterface):
 

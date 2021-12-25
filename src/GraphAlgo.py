@@ -1,9 +1,14 @@
+import concurrent.futures
 import json
+import math
+import multiprocessing
 import random
+from itertools import islice
 from typing import List
 
-from GraphAlgoInterface import GraphAlgoInterface, GraphInterface
-from DiGraph import DiGraph
+from src.GraphAlgoInterface import GraphAlgoInterface
+from src.GraphInterface import GraphInterface
+from src.DiGraph import DiGraph
 
 from src.GUI import Drawer
 
@@ -96,16 +101,22 @@ class GraphAlgo(GraphAlgoInterface):
         return ret, ret_w
 
     def centerPoint(self) -> (int, float):
-        nodes = self.graph.get_all_v()
         ret = None
         min_dist = float('inf')
-        for n in nodes:
-            dist, prev = self.dijkstra(n)
-            m = max(dist, key=dist.get)
-            if dist[m] < min_dist:
-                min_dist = dist[m]
-                ret = m
-        return ret
+
+        chunk_size = 1
+        nodes = self.to_chuncks(self.graph.get_all_v(),500)
+
+        with concurrent.futures.ThreadPoolExecutor() as executer:
+            res = [executer.submit(self.center_helper,node) for node in nodes]
+
+            for f in concurrent.futures.as_completed(res):
+                r = f.result()
+                if r[1] < min_dist:
+                    min_dist = r[1]
+                    ret = r[0]
+
+        return ret,min_dist
 
     def plot_graph(self) -> None:
         d = Drawer.Drawer(self)
@@ -161,3 +172,25 @@ class GraphAlgo(GraphAlgoInterface):
         ret.reverse()
         ret.append(min_node)
         return ret, dist[min_node]
+
+    def center_helper(self,nodes):
+        ret = None
+        min_dist = float('inf')
+        for n in nodes:
+            dist, prev = self.dijkstra(n)
+            m = max(dist, key=dist.get)
+            if dist[m] < min_dist:
+                min_dist = dist[m]
+                ret = m
+        return ret, min_dist
+
+    '''
+    This soultion was given here:
+    https://stackoverflow.com/questions/22878743/how-to-split-dictionary-into-multiple-dictionaries-fast
+    
+    It takes a dictionary, and slices it to chunks.
+    '''
+    def to_chuncks(self,data, chunk_size):
+        it = iter(data)
+        for i in range(0, len(data), math.ceil(len(data)/chunk_size)):
+            yield {k: data[k] for k in islice(it, math.ceil(len(data)/chunk_size))}
