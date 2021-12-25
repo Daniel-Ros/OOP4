@@ -1,3 +1,5 @@
+import math
+
 from pygame.time import Clock
 
 from GraphAlgoInterface import GraphAlgoInterface
@@ -22,7 +24,9 @@ class Drawer:
         pygame.init()
         # load and set the logo
 
-        # create a surface on screen that has the size of 240 x 180
+        font = pygame.font.SysFont(None, 24)
+
+        # create a surface on screen that has the size of 800 x 800
         screen = pygame.display.set_mode((800, 800), pygame.RESIZABLE)
         # define a variable to control the main loop
         running = True
@@ -58,9 +62,12 @@ class Drawer:
                 if n.loc is not None:
                     pfrom = self.point_to_screen_cord(float(n.loc[0]), float(n.loc[1]))
                     pygame.draw.circle(screen, pygame.Color(n.tag), pfrom, 5, 10)
+                    img = font.render(F"{n.id}", True, n.tag)
+                    screen.blit(img, (pfrom[0], pfrom[1]+5))
                     for e in g.all_out_edges_of_node(n.id):
                         pto = self.point_to_screen_cord(float(g.get_all_v()[e].loc[0]), float(g.get_all_v()[e].loc[1]))
-                        pygame.draw.line(screen, (0, 0, 0), pfrom, pto)
+                        pygame.draw.line(screen, min(g.get_all_v()[e].tag, n.tag), pfrom, pto)
+                        self.draw_arrow(screen,pfrom,pto,5)
 
             self.UI.handle_drawing(time_delta)
 
@@ -87,3 +94,27 @@ class Drawer:
                 self.max_x = max(self.max_x, float(n.loc[0]))
                 self.min_y = min(self.min_y, float(n.loc[1]))
                 self.max_y = max(self.max_y, float(n.loc[1]))
+
+    def draw_arrow(self, screen, pfrom, pto, size):
+        sx = pfrom[0]
+        sy = pfrom[1]
+
+        deltax = sx - pto[0]
+        if deltax == 0:
+            res = math.pi /2
+        else:
+            sum = math.pi if sx < pto[0] else 0
+            res = math.atan((sy-pto[1]/deltax) + sum)
+
+        arrow_angle = math.pi / 12
+        x1 = size * math.cos(res - arrow_angle)
+        y1 = size * math.sin(res - arrow_angle)
+        x2 = size * math.cos(res + arrow_angle)
+        y2 = size * math.sin(res + arrow_angle)
+
+        cx = (size / 2) * math.cos(res)
+        cy = (size / 2) * math.sin(res)
+
+        pygame.draw.polygon(screen, (0, 0, 0), ((pto[0], pto[1]), (pto[0] + x1, pto[1] + y1),(pto[0] + x2 , pto[1] + y2)))
+
+

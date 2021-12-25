@@ -83,7 +83,11 @@ class GraphAlgo(GraphAlgoInterface):
             if city in remaining:
                 remaining.remove(city)
 
-            min_road, p = self.get_min_undirected_road(city, remaining)
+            try:
+                min_road, p = self.get_min_undirected_road(city, remaining)
+            except KeyError:
+                return False
+
             ret_w += p
             for n in min_road:
                 if n in remaining:
@@ -157,11 +161,3 @@ class GraphAlgo(GraphAlgoInterface):
         ret.reverse()
         ret.append(min_node)
         return ret, dist[min_node]
-
-    def exist_nodes(self, nodes_id: List[int]) -> bool:
-        nodes = self.graph.get_all_v()
-        list_nodes = []
-        for id in nodes_id:
-            if id not in nodes:
-                return False
-        return True

@@ -113,6 +113,9 @@ class SidePanel:
                             user_src = int(self.src_input.get_text())
                             user_dst = int(self.dst_input.get_text())
                             shortest = self.ga.shortest_path(user_src, user_dst)
+                            nodes = shortest[1]
+                            for n in nodes:
+                                self.ga.get_graph().get_all_v()[n].tag = (255,0,0)
                             ans = '<br>' + str(user_src) + ' >> ' + str(user_dst) + '<br>' + str(shortest[0])
                             self.func_ans.html_text = ans
                             self.func_ans.rebuild()
@@ -128,20 +131,25 @@ class SidePanel:
                             self.func_ans.visible = True
                             for i in range(0, len(user_tsp)):
                                 user_tsp[i] = int(user_tsp[i])
-                            b = self.ga.exist_nodes(user_tsp)
-                            print(user_tsp)
-                            print(b)
-                            tsp_out = -1
+
+                            b = True
+                            nodes = self.ga.get_graph().get_all_v()
+                            for n in user_tsp:
+                                if n not in nodes:
+                                    b = False
+
                             ans = ''
                             counter = 1
                             if b is False:
                                 self.func_ans.html_text = "Node not exist"
+                                return
                             else:
                                 tsp_out = self.ga.TSP(user_tsp)
-                            print(tsp_out)
-                            if tsp_out is -1:
-                                pass
-                            else:
+
+                            if tsp_out is not False:
+                                nodes = tsp_out[0]
+                                for n in nodes:
+                                    self.ga.get_graph().get_all_v()[n].tag = (255, 0, 0)
                                 for i in range(0, len(tsp_out[0])):
                                     if i > 0 and i % 3 == 0:
                                         ans = ans + '<br>'
@@ -157,9 +165,9 @@ class SidePanel:
                                 self.func_ans.set_position((700, 300))
                                 self.func_ans.enable()
                                 self.func_ans.rebuild()
-                            print(tsp_out[1])
-
-
+                            else:
+                                self.func_ans.html_text = "No roue found"
+                                return
 
                     except ValueError:
                         print("bad input")
