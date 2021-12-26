@@ -14,14 +14,26 @@ from src.GUI import Drawer
 
 
 class GraphAlgo(GraphAlgoInterface):
-
+    '''
+    Inits the Class, may get a graph
+    :param g the Graph, can be None
+    '''
     def __init__(self, g: GraphInterface = None):
         self.graph: GraphInterface = g
         self.fake_pos = False
 
+    '''
+    Get the Graph if exists
+    :returns the graph
+    '''
     def get_graph(self) -> GraphInterface:
         return self.graph
 
+    '''
+    Loads a graph from a json file.
+    :param file_name: The path to the json file
+    :returns True if the loading was successful, False o.w.
+    '''
     def load_from_json(self, file_name: str) -> bool:
         g = DiGraph()
         f = open(file_name)
@@ -40,6 +52,11 @@ class GraphAlgo(GraphAlgoInterface):
 
         self.graph = g
 
+    '''
+    Saves the graph in JSON format to a file
+    :param file_name: The path to the out file
+    :return: True if the save was successful, False o.w.
+    '''
     def save_to_json(self, file_name: str) -> bool:
         out = {
             "Nodes": [],
@@ -62,7 +79,12 @@ class GraphAlgo(GraphAlgoInterface):
 
         f = open(file_name, "w+")
         f.write(str(out))
-
+    '''
+    Returns the shortest path from node id1 to node id2 using Dijkstra's Algorithm
+    :param id1: The start node id
+    :param id2: The end node id
+    :return: The distance of the path, a list of the nodes ids that the path goes through
+    '''
     def shortest_path(self, id1: int, id2: int) -> (float, list):
         dist, prev = self.dijkstra(id1)
         ret = []
@@ -77,6 +99,11 @@ class GraphAlgo(GraphAlgoInterface):
 
         return dist[id2], ret
 
+    '''
+    Finds the shortest path that visits all the nodes in the list
+    :param node_lst: A list of nodes id's
+    :return: A list of the nodes id's in the path, and the overall distance 
+    '''
     def TSP(self, node_lst: List[int]) -> (List[int], float):
         if len(node_lst) == 0 or node_lst is None:
             return None
@@ -100,6 +127,10 @@ class GraphAlgo(GraphAlgoInterface):
                 ret.append(n)
         return ret, ret_w
 
+    '''
+        Finds the node that has the shortest distance to it's farthest node.
+        :return: The nodes id, min-maximum distance
+    '''
     def centerPoint(self) -> (int, float):
         ret = None
         min_dist = float('inf')
@@ -107,7 +138,7 @@ class GraphAlgo(GraphAlgoInterface):
         chunk_size = 1
         nodes = self.to_chuncks(self.graph.get_all_v(),500)
 
-        with concurrent.futures.ThreadPoolExecutor() as executer:
+        with concurrent.futures.ProcessPoolExecutor() as executer:
             res = [executer.submit(self.center_helper,node) for node in nodes]
 
             for f in concurrent.futures.as_completed(res):
@@ -117,11 +148,19 @@ class GraphAlgo(GraphAlgoInterface):
                     ret = r[0]
 
         return ret,min_dist
-
+    '''
+    Plots the graph.
+    If the nodes have a position, the nodes will be placed there.
+    Otherwise, they will be placed in a random but elegant manner.
+    :return: None
+    '''
     def plot_graph(self) -> None:
         d = Drawer.Drawer(self)
         d.main()
 
+    '''
+    Dijksta algorithm make with a basic list ( not priority queue)
+    '''
     def dijkstra(self, src) -> (dict, dict):
         dist = {}
         prev = {}
@@ -154,6 +193,11 @@ class GraphAlgo(GraphAlgoInterface):
 
         return dist, prev
 
+
+    '''
+    This funtions helps us to get the node that is closest to the the selected node
+    
+    '''
     def get_min_undirected_road(self, node, remaining):
         dist, prev = self.dijkstra(node)
         min_node = None
@@ -173,6 +217,11 @@ class GraphAlgo(GraphAlgoInterface):
         ret.append(min_node)
         return ret, dist[min_node]
 
+
+    '''
+    This is the Center function.
+    It is here so we can call centerPoint and run this function in multiple processes to seed up the runtime 
+    '''
     def center_helper(self,nodes):
         ret = None
         min_dist = float('inf')
