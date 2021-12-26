@@ -35,22 +35,26 @@ class GraphAlgo(GraphAlgoInterface):
     :returns True if the loading was successful, False o.w.
     '''
     def load_from_json(self, file_name: str) -> bool:
-        g = DiGraph()
-        f = open(file_name)
-        js = json.load(f)
+        try:
+            g = DiGraph()
+            f = open(file_name)
+            js = json.load(f)
 
-        for n in js["Nodes"]:
-            if "pos" in n:
-                (px, py, pz) = n["pos"].split(",")
-            else:
-                self.fake_pos = True
-                (px, py, pz) = (random.uniform(0, 1), random.uniform(0, 1), 0)
-            g.add_node(n["id"], (px, py, pz))
+            for n in js["Nodes"]:
+                if "pos" in n:
+                    (px, py, pz) = n["pos"].split(",")
+                else:
+                    self.fake_pos = True
+                    (px, py, pz) = (random.uniform(0, 1), random.uniform(0, 1), 0)
+                g.add_node(n["id"], (px, py, pz))
 
-        for n in js["Edges"]:
-            g.add_edge(n["src"], n["dest"], n["w"])
+            for n in js["Edges"]:
+                g.add_edge(n["src"], n["dest"], n["w"])
 
-        self.graph = g
+            self.graph = g
+            return True
+        except Exception:
+            return False
 
     '''
     Saves the graph in JSON format to a file
@@ -58,27 +62,32 @@ class GraphAlgo(GraphAlgoInterface):
     :return: True if the save was successful, False o.w.
     '''
     def save_to_json(self, file_name: str) -> bool:
-        out = {
-            "Nodes": [],
-            "Edges": []
-        }
-        for n in self.graph.get_all_v().values():
-            js = {}
-            js["id"] = n.id
-            if not self.fake_pos:
-                js["pos"] = F"{n.loc[0]},{n.loc[1]},{n.loc[2]}"
-            out["Nodes"].append(js)
+        try:
+            out = {
+                "Nodes": [],
+                "Edges": []
+            }
+            for n in self.graph.get_all_v().values():
+                js = {}
+                js["id"] = n.id
+                if not self.fake_pos:
+                    js["pos"] = F"{n.loc[0]},{n.loc[1]},{n.loc[2]}"
+                out["Nodes"].append(js)
 
-        for n in self.graph.get_all_v():
-            for e in self.graph.all_out_edges_of_node(n):
-                out["Edges"].append({
-                    "src": n,
-                    "dest": e,
-                    "w": self.graph.all_out_edges_of_node(n)[e],
-                })
+            for n in self.graph.get_all_v():
+                for e in self.graph.all_out_edges_of_node(n):
+                    out["Edges"].append({
+                        "src": n,
+                        "dest": e,
+                        "w": self.graph.all_out_edges_of_node(n)[e],
+                    })
 
-        f = open(file_name, "w+")
-        f.write(str(out))
+            f = open(file_name, "w+")
+            f.write(str(out))
+            return True
+        except Exception:
+            return False
+
     '''
     Returns the shortest path from node id1 to node id2 using Dijkstra's Algorithm
     :param id1: The start node id
@@ -132,6 +141,9 @@ class GraphAlgo(GraphAlgoInterface):
         :return: The nodes id, min-maximum distance
     '''
     def centerPoint(self) -> (int, float):
+        if self.is_connected() is False:
+            return None, float('inf')
+
         ret = None
         min_dist = float('inf')
 
@@ -243,3 +255,35 @@ class GraphAlgo(GraphAlgoInterface):
         it = iter(data)
         for i in range(0, len(data), math.ceil(len(data)/chunk_size)):
             yield {k: data[k] for k in islice(it, math.ceil(len(data)/chunk_size))}
+
+    def is_connected(self) -> bool:
+        firstNode = self.graph.get_all_v()[0]
+        visited = set()
+        nextNodes = [firstNode.id]
+
+        while len(nextNodes) > 0:
+            n = nextNodes.pop()
+            edges = self.graph.all_out_edges_of_node(n)
+            for e in edges:
+                if e not in visited:
+                    nextNodes.append(e)
+            visited.add(n)
+
+        if len(visited) != self.graph.v_size():
+            return False
+
+        visited = set()
+        nextNodes = [firstNode.id]
+
+        while len(nextNodes) > 0:
+            n = nextNodes.pop()
+            edges = self.graph.all_in_edges_of_node(n)
+            for e in edges:
+                if e not in visited:
+                    nextNodes.append(e)
+            visited.add(n)
+
+        if len(visited) != self.graph.v_size():
+            return False
+        return True
+

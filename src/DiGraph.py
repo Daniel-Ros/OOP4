@@ -52,7 +52,7 @@ class DiGraph(GraphInterface):
     @return: The current version of this graph.    
     '''
     def get_mc(self) -> int:
-        self.mc += 1
+        return self.mc
     '''
     Adds an edge to the graph.  
     @param id1: The start node of the edge
@@ -66,6 +66,7 @@ class DiGraph(GraphInterface):
             self.edges += 1
             self.nodes[id1].edges_to[id2] = weight
             self.nodes[id2].edges_from[id1] = weight
+            self.mc += 1
             return True
         return False
 
@@ -83,6 +84,7 @@ class DiGraph(GraphInterface):
         if pos is None:
             pos = (random.uniform(0,1), random.uniform(0,1), 0)
         self.nodes[node_id] = Node(node_id, pos)
+        self.mc += 1
         return True
     '''
     Removes a node from the graph.
@@ -91,8 +93,17 @@ class DiGraph(GraphInterface):
     Note: if the node id does not exists the function will do nothing
     '''
     def remove_node(self, node_id: int) -> bool:
-        if node_id not in self.nodes[node_id]:
-            self.nodes[node_id] = None
+        if node_id in self.nodes:
+            rem = []
+            for e in self.all_out_edges_of_node(node_id):
+                rem.append((node_id, e))
+            for e in self.all_in_edges_of_node(node_id):
+                rem.append((e,node_id))
+
+            for r in rem:
+                self.remove_edge(r[0],r[1])
+
+            self.nodes.pop(node_id)
             return True
         else:
             return False
