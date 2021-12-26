@@ -148,7 +148,7 @@ class GraphAlgo(GraphAlgoInterface):
         min_dist = float('inf')
 
         chunk_size = 1
-        nodes = self.to_chuncks(self.graph.get_all_v(),500)
+        nodes = self.to_chuncks(self.graph.get_all_v(),multiprocessing.cpu_count() - 1)
 
         with concurrent.futures.ProcessPoolExecutor() as executer:
             res = [executer.submit(self.center_helper,node) for node in nodes]
