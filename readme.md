@@ -38,26 +38,28 @@ after that you can download and run the project with:
 
 ## images
 
+![img.png](img.png)
+
+![img_1.png](img_1.png)
 ##  Results
 
 These are the final results that I was able to get
 
-| size   | algorithm        | time to finish in Millisecons |
+| size   | algorithm        | time to finish in seconds  |
 |--------|------------------|-------------------------------|
- | 100    | shortestPath     | 45                            |
- | 100    | shortestPathDist | 26                            |
- | 100    | center           | 1703                          |
- | 1000   | shortestPath     | 45                            |
- | 1000   | shortestPathDist | 26                            |
- | 1000   | center           | 1703                          |
- | 1000   | tsp              | 36                            |
- | 10000  | shortestPath     | 342                           |
- | 10000  | tsp              | 1124                          |
- | 10000  | center           | 529873                        |
- | 100000 | isConnected      | 8095                          |
- | 100000 | shortestPath     | 5500                          |
- | 100000 | tsp              | 27946                         |
+ | 100    | shortestPath     | 0.004                      |
+ | 100    | shortestPathDist | 0.004                        |
+ | 100    | center           | 0.102                        |
+ | 1000   | shortestPathDist | 0.048                         |
+ | 1000   | center           | 8.43                          |
+ | 1000   | tsp              | 0.0965                           |
+ | 10000  | shortestPathDist | 0.593                           |
+ | 10000  | center           | 1082.5779                          |
+ | 10000  | tsp              | 1.183                        |
+ | 100000 | shortestPathDist | 0.01                          |
  | 100000 | center           | > 30 min                      |
+ | 100000 | tsp              | 0.002                         |
+
 
 
 

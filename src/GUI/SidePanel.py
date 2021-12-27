@@ -166,7 +166,7 @@ class SidePanel:
                                 self.func_ans.enable()
                                 self.func_ans.rebuild()
                             else:
-                                self.func_ans.html_text = "No roue found"
+                                self.func_ans.html_text = "No route found"
                                 return
 
                     except ValueError:

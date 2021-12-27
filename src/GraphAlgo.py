@@ -3,12 +3,15 @@ import json
 import math
 import multiprocessing
 import random
+from functools import cmp_to_key
 from itertools import islice
 from typing import List
+from queue import PriorityQueue
 
 from src.GraphAlgoInterface import GraphAlgoInterface
 from src.GraphInterface import GraphInterface
 from src.DiGraph import DiGraph
+from src.pq import CustomPriorityQueue
 
 from src.GUI import Drawer
 
@@ -148,10 +151,10 @@ class GraphAlgo(GraphAlgoInterface):
         min_dist = float('inf')
 
         chunk_size = 1
-        nodes = self.to_chuncks(self.graph.get_all_v(),multiprocessing.cpu_count() - 1)
+        nodes = self.to_chuncks(self.graph.get_all_v(), multiprocessing.cpu_count() - 1)
 
         with concurrent.futures.ProcessPoolExecutor() as executer:
-            res = [executer.submit(self.center_helper,node) for node in nodes]
+            res = [executer.submit(self._center_helper, node) for node in nodes]
 
             for f in concurrent.futures.as_completed(res):
                 r = f.result()
@@ -170,14 +173,16 @@ class GraphAlgo(GraphAlgoInterface):
         d = Drawer.Drawer(self)
         d.main()
 
+
+
     '''
     Dijksta algorithm make with a basic list ( not priority queue)
     '''
     def dijkstra(self, src) -> (dict, dict):
         dist = {}
         prev = {}
-        visited = []
-        Q = []
+        visited = set()
+        Q = CustomPriorityQueue(key = cmp_to_key(lambda n1,n2: dist[n1] - dist[n2]))
 
         nodes = self.graph.get_all_v()
         for node_id in nodes:
@@ -188,20 +193,20 @@ class GraphAlgo(GraphAlgoInterface):
                 dist[node_id] = float('inf')
                 prev[node_id] = -1
 
-        Q.append(src)
+        Q.put(src)
 
-        while len(Q) != 0:
-            sorted(Q, key=lambda x: dist[x])
-            n = Q.pop()
+        while len(Q.queue) > 0:
+            n = Q.get()
+            visited.add(n)
             edges = self.graph.all_out_edges_of_node(n)
             for dest in edges:
                 if dest in visited:
-                    continue;
+                    continue
                 alt = dist[n] + edges[dest]
                 if alt < dist[dest]:
                     dist[dest] = alt
                     prev[dest] = n
-                    Q.append(dest)
+                    Q.put(dest)
 
         return dist, prev
 
@@ -234,7 +239,7 @@ class GraphAlgo(GraphAlgoInterface):
     This is the Center function.
     It is here so we can call centerPoint and run this function in multiple processes to seed up the runtime 
     '''
-    def center_helper(self,nodes):
+    def _center_helper(self, nodes):
         ret = None
         min_dist = float('inf')
         for n in nodes:
@@ -242,7 +247,7 @@ class GraphAlgo(GraphAlgoInterface):
             m = max(dist, key=dist.get)
             if dist[m] < min_dist:
                 min_dist = dist[m]
-                ret = m
+                ret = n
         return ret, min_dist
 
     '''
@@ -286,4 +291,3 @@ class GraphAlgo(GraphAlgoInterface):
         if len(visited) != self.graph.v_size():
             return False
         return True
-

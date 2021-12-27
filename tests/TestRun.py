@@ -2,8 +2,8 @@ import time
 from src.GraphAlgo import GraphAlgo
 
 def main():
-    file_l = "../test_data/g2.json"
-    file_s = "../test_data/g2_saved.json"
+    file_l = "../test_data/g4.json"
+    file_s = "../test_data/g4_saved.json"
     ga = GraphAlgo()
     tic = time.perf_counter()
     ga.load_from_json(file_l)
@@ -14,11 +14,11 @@ def main():
     toc = time.perf_counter()
     print(F"shortest path took :{toc - tic:0.4f} sec and the resualt is:{res}")
     tic = time.perf_counter()
-    res = ga.centerPoint()
+    #res = ga.centerPoint()
     toc = time.perf_counter()
     print(F"center took :{toc - tic:0.4f} sec and the resualt is:{res}")
     tic = time.perf_counter()
-    res = ga.TSP([0,50,99])
+    res = ga.TSP([0,1,25,50,75,80,99,42,87,13,57])
     toc = time.perf_counter()
     print(F"TSP took :{toc - tic:0.4f} sec and the resualt is:{res}")
     tic = time.perf_counter()
