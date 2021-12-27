@@ -60,7 +60,9 @@ These are the final results that I was able to get
  | 100000 | tsp              | 88.59                       |
 
 
-
+## uml
+ 
+![img.png](images/uml.png)
 
 ## Assigment Instructions
 [here](https://docs.google.com/document/d/15sTWy_pa6Vg4r7phAC322vZA169V02yezjxxf4b9sJc/edit)
