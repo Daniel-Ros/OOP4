@@ -2,8 +2,8 @@ import time
 from src.GraphAlgo import GraphAlgo
 
 def main():
-    file_l = "../test_data/g4.json"
-    file_s = "../test_data/g4_saved.json"
+    file_l = "../test_data/g3.json"
+    file_s = "../test_data/g1_saved.json"
     ga = GraphAlgo()
     tic = time.perf_counter()
     ga.load_from_json(file_l)

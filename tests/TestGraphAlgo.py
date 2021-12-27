@@ -43,7 +43,8 @@ class TestGraphAlgo(TestCase):
     def test_center_point(self):
         ga = GraphAlgo()
         ga.load_from_json("../data/A5.json")
-        print(ga.centerPoint())
+        self.assertEqual(ga.centerPoint()[0], 40)
+
 
 
     def test_dijkstra(self):

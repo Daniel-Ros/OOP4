@@ -38,9 +38,9 @@ after that you can download and run the project with:
 
 ## images
 
-![img.png](img.png)
+![img.png](tests/images/img.png)
 
-![img_1.png](img_1.png)
+![img_1.png](tests/images/img_1.png)
 ##  Results
 
 These are the final results that I was able to get
@@ -58,7 +58,7 @@ These are the final results that I was able to get
  | 10000  | tsp              | 1.183                        |
  | 100000 | shortestPathDist | 0.01                          |
  | 100000 | center           | > 30 min                      |
- | 100000 | tsp              | 0.002                         |
+ | 100000 | tsp              | 88.59                       |
 
 
 
