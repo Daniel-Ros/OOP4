@@ -8,12 +8,12 @@ from itertools import islice
 from typing import List
 from queue import PriorityQueue
 
-from src.GraphAlgoInterface import GraphAlgoInterface
-from src.GraphInterface import GraphInterface
-from src.DiGraph import DiGraph
-from src.pq import CustomPriorityQueue
+from GraphAlgoInterface import GraphAlgoInterface
+from GraphInterface import GraphInterface
+from DiGraph import DiGraph
+from pq import CustomPriorityQueue
 
-from src.GUI import Drawer
+from GUI import Drawer
 
 
 class GraphAlgo(GraphAlgoInterface):

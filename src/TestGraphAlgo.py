@@ -30,8 +30,8 @@ class TestGraphAlgo(TestCase):
         ga = GraphAlgo()
         file = "../data/T0.json"
         ga.load_from_json(file)  # init a GraphAlgo from a json file
-        self.assertEqual(ga.shortest_path(3, 1), (3.4, [0, 1, 2, 3]))
-        self.assertEqual(ga.shortest_path(0, 3), (inf, []))
+        self.assertEqual(ga.shortest_path(3, 1), (inf, []))
+        self.assertEqual(ga.shortest_path(0, 3), (2.8, [0, 1, 3]))
 
 
 

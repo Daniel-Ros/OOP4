@@ -2,11 +2,11 @@ import math
 
 from pygame.time import Clock
 
-from src.GraphAlgoInterface import GraphAlgoInterface
+from GraphAlgoInterface import GraphAlgoInterface
 
 import pygame
 
-from src.GUI.SidePanel import SidePanel
+from GUI.SidePanel import SidePanel
 
 
 class Drawer:

@@ -1,6 +1,6 @@
 import json
 from typing import List
-from src.GraphInterface import GraphInterface
+from GraphInterface import GraphInterface
 
 
 class GraphAlgoInterface:

@@ -1,5 +1,5 @@
 import time
-from src.GraphAlgo import GraphAlgo
+from GraphAlgo import GraphAlgo
 
 def main():
     file_l = "../test_data/g3.json"

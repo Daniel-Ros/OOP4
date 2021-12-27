@@ -38,9 +38,9 @@ after that you can download and run the project with:
 
 ## images
 
-![img.png](tests/images/img.png)
+![img.png](images/img.png)
 
-![img_1.png](tests/images/img_1.png)
+![img_1.png](images/img_1.png)
 ##  Results
 
 These are the final results that I was able to get
