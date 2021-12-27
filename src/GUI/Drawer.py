@@ -28,6 +28,7 @@ class Drawer:
 
         # create a surface on screen that has the size of 800 x 800
         screen = pygame.display.set_mode((800, 800))
+        pygame.display.set_caption("Graph GUI, made by Daniel Rosenberg and Daniel Zinn")
         # define a variable to control the main loop
         running = True
 

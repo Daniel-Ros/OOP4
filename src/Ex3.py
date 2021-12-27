@@ -1,6 +1,6 @@
-from src.GUI.Drawer import Drawer
-from src.DiGraph import DiGraph
-from src.GraphAlgo import GraphAlgo
+from GUI.Drawer import Drawer
+from DiGraph import DiGraph
+from GraphAlgo import GraphAlgo
 
 
 def main():
