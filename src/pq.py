@@ -1,5 +1,11 @@
 from queue import PriorityQueue
 
+'''
+This is a custom priority queue designed with the intention to add a custom comparator.
+
+This design was influenced by:
+https://stackoverflow.com/questions/57487170/is-it-possible-to-pass-a-comparator-to-a-priorityqueue-in-python
+'''
 
 class _cmp_class:
     def __init__(self, item, key):
