@@ -16,8 +16,7 @@ The workspace contains two folders by default, where:
 
 - `src`: the folder to maintain sources
     - `GUI`: the folder where all the Gui related files are
-- `data`: the folder which contains all of our graphs are 
-- `test` : a folder with our unittests
+- `data`: the folder which contains all of our graphs are
 
 
 ## Testing
