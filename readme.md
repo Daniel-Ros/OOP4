@@ -33,7 +33,7 @@ after that you can download and run the project with:
 
     git clone https://github.com/Daniel-Ros/OOP4.git
     cd OOP4
-    python Ex3.py
+    python src/Ex3.py
 
 ## images
 
